@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "This is only an example of how kafka work with nodejs",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -29,5 +30,9 @@
     "commitizen": {
       "path": "./node_modules/git-cz"
     }
+  },
+  "dependencies": {
+    "fastify": "^3.25.3",
+    "fastify-cors": "^6.0.2"
   }
 }
