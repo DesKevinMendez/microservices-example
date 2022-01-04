@@ -1,0 +1,33 @@
+{
+  "name": "kafka-microservices",
+  "version": "1.0.0",
+  "description": "This is only an example of how kafka work with nodejs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DesKevinMendez/kafka-nodejs-microservice.git"
+  },
+  "keywords": [
+    "nodejs",
+    "kafka",
+    "microservices"
+  ],
+  "author": "Kevin Méndez",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DesKevinMendez/kafka-nodejs-microservice/issues"
+  },
+  "homepage": "https://github.com/DesKevinMendez/kafka-nodejs-microservice#readme",
+  "devDependencies": {
+    "commitizen": "^4.2.4",
+    "git-cz": "^4.8.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/git-cz"
+    }
+  }
+}
