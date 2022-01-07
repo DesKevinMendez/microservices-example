@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "producer": "nodemon producer-api/index.js",
-    "consumer": "nodemon consumer-worker/index.js"
+    "consumer": "nodemon consumer-worker/index.js",
+    "gateway": "nodemon api-gateway/server.js"
   },
   "repository": {
     "type": "git",
@@ -35,6 +36,7 @@
   },
   "dependencies": {
     "avsc": "^5.7.3",
+    "express-gateway": "^1.16.11",
     "fastify": "^3.25.3",
     "fastify-cors": "^6.0.2",
     "node-rdkafka": "^2.12.0"

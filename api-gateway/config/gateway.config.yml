@@ -1,0 +1,62 @@
+http:
+  port: 8090
+admin:
+  port: 9876
+  host: localhost
+apiEndpoints:
+  api:
+    host: localhost
+    paths: '/ip'
+  python:
+    host: localhost
+    paths: ['/python']
+  fastify:
+    host: localhost
+    paths: ['/fastify']
+serviceEndpoints:
+  httpbin:
+    url: 'https://httpbin.org'
+  pythonService: 
+    url: 'http://127.0.0.1:5000/'
+  fastifyService: 
+    url: 'http://127.0.0.1:3006/'
+policies:
+  - basic-auth
+  - cors
+  - expression
+  - key-auth
+  - log
+  - oauth2
+  - proxy
+  - rate-limit
+pipelines:
+  default:
+    apiEndpoints:
+      - api
+    policies:
+    # Uncomment `key-auth:` when instructed to in the Getting Started guide.
+    # - key-auth:
+      - proxy:
+          - action:
+              serviceEndpoint: httpbin 
+              changeOrigin: true
+  pythonPipeline:
+    apiEndpoints:
+      - python
+    policies:
+    # Uncomment `key-auth:` when instructed to in the Getting Started guide.
+    # - key-auth:
+      - proxy:
+        - action:
+            serviceEndpoint: pythonService
+            changeOrigin: true
+  fastifyPipeline:
+    apiEndpoints:
+      - fastify
+    policies:
+    # Uncomment `key-auth:` when instructed to in the Getting Started guide.
+    # - key-auth:
+      - proxy:
+        - action:
+            serviceEndpoint: fastifyService
+            changeOrigin: true
