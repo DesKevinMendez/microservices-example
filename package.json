@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DesKevinMendez/kafka-nodejs-microservice.git"
+    "url": "git+https://github.com/DesKevinMendez/microservices-example.git"
   },
   "keywords": [
     "nodejs",
@@ -21,9 +21,9 @@
   "author": "Kevin Méndez",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/DesKevinMendez/kafka-nodejs-microservice/issues"
+    "url": "https://github.com/DesKevinMendez/microservices-example/issues"
   },
-  "homepage": "https://github.com/DesKevinMendez/kafka-nodejs-microservice#readme",
+  "homepage": "https://github.com/DesKevinMendez/microservices-example#readme",
   "devDependencies": {
     "commitizen": "^4.2.4",
     "git-cz": "^4.8.0",
