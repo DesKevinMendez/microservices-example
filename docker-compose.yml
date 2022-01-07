@@ -1,4 +1,7 @@
-version: "3"
+version: "3.7"
+networks:
+  microservice-net:
+    driver: bridge
 services:
   zookeeper:
     image: zookeeper
@@ -6,6 +9,8 @@ services:
       - '2181:2181'
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - microservice-net
   kafka:
     image: 'bitnami/kafka'
     container_name: 'kafka'
@@ -19,3 +24,30 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
     depends_on:
       - zookeeper
+    networks:
+      - microservice-net
+
+  producerkafka: &kafkaproducer
+    tty: true
+    stdin_open: true
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # image: nodejs
+    depends_on:
+      - zookeeper
+      - kafka
+    container_name: producer_api
+    restart: unless-stopped
+    ports:
+      - '9000:3000'
+    command: ["yarn", "producer"]
+    networks:
+      - microservice-net
+
+  consumer:
+    <<: *kafkaproducer
+    container_name: consumer_worker
+    ports:
+      - '9001:3000'
+    command: ["yarn", "consumer"]
