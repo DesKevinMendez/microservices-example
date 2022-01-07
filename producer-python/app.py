@@ -13,7 +13,6 @@ producer = KafkaProducer(
 
 @app.route('/', methods=['GET'])
 def index():
-    response = {'message': 'success'}
     response = {'language': 'python', 'is': 'awesome'}
 
     json_payload = json.dumps(response)
