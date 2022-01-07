@@ -1,7 +1,7 @@
 import { getIndex } from "../controllers/indexController.js";
 
 const routers = (fastify, _, done) => {
-  fastify.get('/', getIndex);
+  fastify.get('/fastify', getIndex);
   done();
 };
 
