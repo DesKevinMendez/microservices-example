@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "producer": "node producer-api/index.js",
-    "consumer": "node consumer-worker/index.js"
+    "producer": "nodemon producer-api/index.js",
+    "consumer": "nodemon consumer-worker/index.js"
   },
   "repository": {
     "type": "git",
@@ -25,7 +25,8 @@
   "homepage": "https://github.com/DesKevinMendez/kafka-nodejs-microservice#readme",
   "devDependencies": {
     "commitizen": "^4.2.4",
-    "git-cz": "^4.8.0"
+    "git-cz": "^4.8.0",
+    "nodemon": "^2.0.15"
   },
   "config": {
     "commitizen": {
