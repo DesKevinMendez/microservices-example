@@ -17,10 +17,10 @@ stream.on('error', (err) => {
 });
 
 function queueRandomMessage(languages) {
-  console.log('🚀 ~ queueRandomMessage ~ languages', languages)
-  const success = stream.write(objectToJson.toBuffer(languages));
+  const languagesString = JSON.stringify(languages)
+  const success = stream.write(languagesString);
   if (success) {
-    console.log(`message queued (${JSON.stringify(languages)})`);
+    console.log(`message queued (${languagesString})`);
   } else {
     console.log('Too many messages in the queue already..');
   }

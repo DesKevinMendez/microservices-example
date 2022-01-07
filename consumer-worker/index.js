@@ -13,5 +13,6 @@ consumer.on('ready', () => {
   consumer.subscribe(['test']);
   consumer.consume();
 }).on('data', function(data) {
-  console.log(`received message: ${objectToJson.fromBuffer(data.value)}`);
+  console.log(`received message: ${data.value}`);
+  // console.log(`received message: ${objectToJson.fromBuffer(data.value)}`);
 });
