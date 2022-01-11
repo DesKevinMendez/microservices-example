@@ -1,8 +1,12 @@
 version: "3.7"
 
-# networks:
-#   microservice-net:
-#     driver: bridge
+networks:
+  microservice-net:
+    driver: bridge
+
+volumes:
+  postgresql_local_data: {}
+  postgresql_local_data_backups: {}
 
 services:
   zookeeper:
@@ -11,8 +15,9 @@ services:
       - '2181:2181'
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
-    # networks:
-    #   - microservice-net
+    networks:
+      - microservice-net
+
   kafka:
     image: 'bitnami/kafka'
     container_name: 'kafka'
@@ -26,8 +31,20 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
     depends_on:
       - zookeeper
-    # networks:
-    #   - microservice-net
+    networks:
+      - microservice-net
+
+  db:
+    image: postgres:11
+    volumes:
+      - postgresql_local_data:/var/lib/postgresql/data
+      - postgresql_local_data_backups:/backups
+    environment:
+      POSTGRES_PASSWORD: microservice_password
+    ports:
+      - '5433:5432'
+    networks:
+      - microservice-net
 
   # producerkafka: &kafkaproducer
   #   tty: true
