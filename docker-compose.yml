@@ -45,6 +45,16 @@ services:
       - '5433:5432'
     networks:
       - microservice-net
+  
+  python_producer: 
+    build: ./producer-python
+    container_name: pythonProducer
+    environment:
+      FLASK_DEBUG: 1
+      FLASK_APP: ./app.py
+    restart: unless-stopped
+    ports:
+      - '5001:5001'
 
   # producerkafka: &kafkaproducer
   #   tty: true
