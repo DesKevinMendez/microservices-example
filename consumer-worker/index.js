@@ -1,11 +1,11 @@
 import Kafka from 'node-rdkafka';
-import objectToJson from './../utils/objectBuffer.js';
 
 const consumer = new Kafka.KafkaConsumer({
   'group.id': 'kafka',
-  'metadata.broker.list': 'localhost:9092',
+  'metadata.broker.list': 'kafka:9092',
 }, {});
 
+console.log('Se ejecuta');
 consumer.connect();
 
 consumer.on('ready', () => {

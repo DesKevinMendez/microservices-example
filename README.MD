@@ -1,0 +1,1 @@
+docker build -f Dockerfile.node-producer -t node-producer . && docker rm node-producer -f  && docker run --name node-producer -t -p 3002:3000 node-producer
