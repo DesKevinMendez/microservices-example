@@ -4,10 +4,6 @@ networks:
   microservice-net:
     driver: bridge
 
-volumes:
-  postgresql_local_data: {}
-  postgresql_local_data_backups: {}
-
 services:
   zookeeper:
     image: zookeeper
@@ -17,44 +13,23 @@ services:
       - ALLOW_ANONYMOUS_LOGIN=yes
     networks:
       - microservice-net
-
   kafka:
     image: 'bitnami/kafka'
     container_name: 'kafka'
     ports:
-      - '9092:9092'
+      - '9093:9093'
     environment:
-      - KAFKA_BROKER_ID=1
-      - KAFKA_LISTENERS=PLAINTEXT://:9092
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      # - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
     depends_on:
       - zookeeper
     networks:
       - microservice-net
-
-  db:
-    image: postgres:11
-    volumes:
-      - postgresql_local_data:/var/lib/postgresql/data
-      - postgresql_local_data_backups:/backups
-    environment:
-      POSTGRES_PASSWORD: microservice_password
-    ports:
-      - '5433:5432'
-    networks:
-      - microservice-net
-  
-  python_producer: 
-    build: ./producer-python
-    container_name: pythonProducer
-    environment:
-      FLASK_DEBUG: 1
-      FLASK_APP: ./app.py
-    restart: unless-stopped
-    ports:
-      - '5001:5001'
 
   # producerkafka: &kafkaproducer
   #   tty: true

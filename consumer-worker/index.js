@@ -2,11 +2,11 @@ import Kafka from 'node-rdkafka';
 
 const consumer = new Kafka.KafkaConsumer({
   'group.id': 'kafka',
-  'metadata.broker.list': 'kafka:9092',
+  'metadata.broker.list': 'localhost:9093',
 }, {});
 
-console.log('Se ejecuta');
 consumer.connect();
+console.log('Se ejecuta');
 
 consumer.on('ready', () => {
   console.log('consumer ready..')
