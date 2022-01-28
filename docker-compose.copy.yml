@@ -1,0 +1,82 @@
+version: "3.7"
+
+networks:
+  microservice-net:
+    driver: bridge
+
+volumes:
+  postgresql_local_data: {}
+  postgresql_local_data_backups: {}
+
+services:
+  zookeeper:
+    image: zookeeper
+    ports:
+      - '2181:2181'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - microservice-net
+
+  kafka:
+    image: 'bitnami/kafka'
+    container_name: 'kafka'
+    ports:
+      - '9092:9092'
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    depends_on:
+      - zookeeper
+    networks:
+      - microservice-net
+
+  db:
+    image: postgres:11
+    volumes:
+      - postgresql_local_data:/var/lib/postgresql/data
+      - postgresql_local_data_backups:/backups
+    environment:
+      POSTGRES_PASSWORD: microservice_password
+    ports:
+      - '5433:5432'
+    networks:
+      - microservice-net
+  
+  python_producer: 
+    build: ./producer-python
+    container_name: pythonProducer
+    environment:
+      FLASK_DEBUG: 1
+      FLASK_APP: ./app.py
+    restart: unless-stopped
+    ports:
+      - '5001:5001'
+
+  # producerkafka: &kafkaproducer
+  #   tty: true
+  #   stdin_open: true
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   # image: nodejs
+  #   depends_on:
+  #     - zookeeper
+  #     - kafka
+  #   container_name: producer_api
+  #   restart: unless-stopped
+  #   ports:
+  #     - '9000:3000'
+  #   command: ["yarn", "producer"]
+  #   networks:
+  #     - microservice-net
+
+  # consumer:
+  #   <<: *kafkaproducer
+  #   container_name: consumer_worker
+  #   ports:
+  #     - '9001:3000'
+  #   command: ["yarn", "consumer"]
