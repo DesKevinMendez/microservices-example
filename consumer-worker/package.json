@@ -34,9 +34,6 @@
   },
   "dependencies": {
     "avsc": "^5.7.3",
-    "express-gateway": "^1.16.11",
-    "fastify": "^3.25.3",
-    "fastify-cors": "^6.0.2",
     "node-rdkafka": "^2.12.0"
   }
 }
