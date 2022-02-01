@@ -11,6 +11,10 @@ producer = KafkaProducer(
     api_version = (0, 11, 15)
 )
 
+@app.route('/', methods=['GET'])
+def home():
+    return 'hola modificado'
+
 @app.route('/python', methods=['GET'])
 def index():
     response = {'language': 'python', 'is': 'awesome'}
