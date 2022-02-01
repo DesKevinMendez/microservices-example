@@ -2,7 +2,13 @@ from flask import Flask, request, jsonify
 import json
 from flask_cors import CORS
 from kafka import KafkaConsumer, KafkaProducer
+from application.models import db, migrate
+from dotenv import load_dotenv
+import os
+load_dotenv()
+
 app = Flask(__name__)
+
 TOPIC_NAME = "test"
 KAFKA_SERVER = "localhost:9092"
 
@@ -11,9 +17,24 @@ producer = KafkaProducer(
     api_version = (0, 11, 15)
 )
 
+POSTGRES = {
+    'user': os.getenv("POSTGRES_USER"),
+    'pw': 'postgres',
+    'db': os.getenv("POSTGRES_DB"),
+    'host': os.getenv("POSTGRES_HOSTNAME"),
+    'port': os.getenv("POSTGRES_PORT"),
+}
+
+app.config['DEBUG'] = True
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://%(user)s:\
+%(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
+
+db.init_app(app)
+migrate.init_app(app, db)
+
 @app.route('/', methods=['GET'])
 def home():
-    return 'hola modificado'
+    return 'hola'
 
 @app.route('/python', methods=['GET'])
 def index():
