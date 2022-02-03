@@ -1,3 +1,4 @@
+from flask import abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
@@ -9,7 +10,9 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String, unique=True, nullable=False)
     def json(self):
-        return {'id': self.id, 'email': self.email}
+        if self is not None:
+            return {'id': self.id, 'email': self.email}
+        else: abort(404, description="User not found")
         # this method we are defining will convert our output to json
 
     def add_user(_email):
