@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
 import json
-from flask_cors import CORS
-from kafka import KafkaConsumer, KafkaProducer
+from kafka import KafkaProducer
 from application.models import db, migrate
 from dotenv import load_dotenv
 import os
@@ -26,6 +25,7 @@ POSTGRES = {
 }
 
 app.config['DEBUG'] = True
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://%(user)s:\
 %(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
 

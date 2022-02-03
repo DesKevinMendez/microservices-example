@@ -8,3 +8,8 @@ class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String, unique=True, nullable=False)
+
+class Coffe(db.Model):
+    __tablename__ = "coffe"
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String, unique=True, nullable=False)
