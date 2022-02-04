@@ -6,62 +6,73 @@ networks:
     driver: bridge
 
 services:
-  zookeeper:
-    image: zookeeper
-    container_name: 'keeper'
-    ports:
-      - '2181:2181'
-    environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
-    networks:
-      - microservice-net
-  kafka:
-    image: 'bitnami/kafka'
-    container_name: 'kafka'
-    ports:
-      - '9092:9092'
-    environment:
-      - KAFKA_BROKER_ID=1
-      - KAFKA_LISTENERS=PLAINTEXT://:9092
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      - ALLOW_PLAINTEXT_LISTENER=yes
-    depends_on:
-      - zookeeper
-    networks:
-      - microservice-net
+  # zookeeper:
+  #   image: zookeeper
+  #   container_name: 'keeper'
+  #   ports:
+  #     - '2181:2181'
+  #   environment:
+  #     - ALLOW_ANONYMOUS_LOGIN=yes
+  #   networks:
+  #     - microservice-net
+  # kafka:
+  #   image: 'bitnami/kafka'
+  #   container_name: 'kafka'
+  #   ports:
+  #     - '9092:9092'
+  #   environment:
+  #     - KAFKA_BROKER_ID=1
+  #     - KAFKA_LISTENERS=PLAINTEXT://:9092
+  #     - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
+  #     - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+  #     - ALLOW_PLAINTEXT_LISTENER=yes
+  #   depends_on:
+  #     - zookeeper
+  #   networks:
+  #     - microservice-net
 
-  db:
-    image: postgres:11
-    container_name: 'postgres'
-    env_file: 
-      - .env
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - "${POSTGRES_PORT}:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-  web:
-    container_name: 'python-web'
+  # db:
+  #   image: postgres:11
+  #   container_name: 'postgres'
+  #   env_file: 
+  #     - .env
+  #   environment:
+  #     POSTGRES_DB: ${POSTGRES_DB}
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #   ports:
+  #     - "${POSTGRES_PORT}:5432"
+  #   volumes:
+  #     - pgdata:/var/lib/postgresql/data
+  # web:
+  #   container_name: 'python-web'
+  #   build:
+  #     context: ${PWD}/producer-python
+  #     # dockerfile: ./Dockerfile
+  #   env_file: 
+  #     - .env
+  #   environment:
+  #     FLASK_ENV: ${FLASK_ENV}
+  #     FLASK_CONFIG: ${FLASK_CONFIG}
+  #     APPLICATION_DB: ${APPLICATION_DB}
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_HOSTNAME: "db"
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #     POSTGRES_PORT: ${POSTGRES_PORT}
+  #   command: flask run --host 0.0.0.0
+  #   volumes:
+  #     - ${PWD}/producer-python:/home/
+  #   ports:
+  #     - "5001:5000"
+  consumer:
+    container_name: 'consumer'
     build:
-      context: ${PWD}/producer-python
-      # dockerfile: ./Dockerfile
-    env_file: 
-      - .env
-    environment:
-      FLASK_ENV: ${FLASK_ENV}
-      FLASK_CONFIG: ${FLASK_CONFIG}
-      APPLICATION_DB: ${APPLICATION_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_HOSTNAME: "db"
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_PORT: ${POSTGRES_PORT}
-    command: flask run --host 0.0.0.0
+      context: ${PWD}/consumer-worker
+    command: npx nodemon index.js
     volumes:
-      - ${PWD}/producer-python:/home/
-    ports:
-      - "5001:5000"
+      - ${PWD}/consumer-worker:/home/
+    networks:
+      - microservice-net
+    # ports:
+    #   - "5001:5000"
 

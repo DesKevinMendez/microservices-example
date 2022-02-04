@@ -1,5 +1,4 @@
 import Kafka from 'node-rdkafka';
-import objectToJson from './../utils/objectBuffer.js';
 
 const consumer = new Kafka.KafkaConsumer({
   'group.id': 'kafka',
