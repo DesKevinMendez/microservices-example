@@ -1,18 +1,20 @@
 version: "3.7"
-
-# networks:
-#   microservice-net:
-#     driver: bridge
+volumes:
+  pgdata:
+networks:
+  microservice-net:
+    driver: bridge
 
 services:
   zookeeper:
     image: zookeeper
+    container_name: 'keeper'
     ports:
       - '2181:2181'
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
-    # networks:
-    #   - microservice-net
+    networks:
+      - microservice-net
   kafka:
     image: 'bitnami/kafka'
     container_name: 'kafka'
@@ -26,30 +28,40 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
     depends_on:
       - zookeeper
-    # networks:
-    #   - microservice-net
+    networks:
+      - microservice-net
 
-  # producerkafka: &kafkaproducer
-  #   tty: true
-  #   stdin_open: true
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   # image: nodejs
-  #   depends_on:
-  #     - zookeeper
-  #     - kafka
-  #   container_name: producer_api
-  #   restart: unless-stopped
-  #   ports:
-  #     - '9000:3000'
-  #   command: ["yarn", "producer"]
-  #   networks:
-  #     - microservice-net
+  db:
+    image: postgres:11
+    container_name: 'postgres'
+    env_file: 
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  web:
+    container_name: 'python-web'
+    build:
+      context: ${PWD}/producer-python
+      # dockerfile: ./Dockerfile
+    env_file: 
+      - .env
+    environment:
+      FLASK_ENV: ${FLASK_ENV}
+      FLASK_CONFIG: ${FLASK_CONFIG}
+      APPLICATION_DB: ${APPLICATION_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_HOSTNAME: "db"
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    command: flask run --host 0.0.0.0
+    volumes:
+      - ${PWD}/producer-python:/home/
+    ports:
+      - "5001:5000"
 
-  # consumer:
-  #   <<: *kafkaproducer
-  #   container_name: consumer_worker
-  #   ports:
-  #     - '9001:3000'
-  #   command: ["yarn", "consumer"]
