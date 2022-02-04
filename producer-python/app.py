@@ -54,15 +54,15 @@ def user():
 def get_put_delete_user(id): 
     if request.method == 'DELETE':
         User.delete_user(id)
-        return Response("User deleted", 201, mimetype='application/json')
+        return Response("User deleted", 202, mimetype='application/json')
     elif request.method == 'GET': 
         return jsonify(User.get_user(id))
 
     elif request.method == 'PUT':
         email = request.form['email']
-        user = User.update_user(id, email)
+        User.update_user(id, email)
 
-        return Response(jsonify(user), 200, mimetype='application/json')
+        return Response('User updated', 200, mimetype='application/json')
 
 
 @app.route('/python', methods=['GET'])

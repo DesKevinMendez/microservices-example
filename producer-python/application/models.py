@@ -33,6 +33,8 @@ class User(db.Model):
 
     def update_user(_id, _email):
         user_to_update = User.query.filter_by(id=_id).first()
+        if user_to_update is None:
+            abort(404, description="User not found")
         user_to_update.email = _email
         db.session.commit()
         return User.json(user_to_update)
