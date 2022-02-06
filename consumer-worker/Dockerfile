@@ -1,4 +1,4 @@
-FROM node:16.10.0-alpine as CONSUMER-WORKER
+FROM node:16.10.0-alpine as PRODUCER-API
 
 RUN apk --no-cache add \
       bash \
@@ -13,10 +13,14 @@ RUN apk --no-cache add \
 
 RUN apk add --no-cache --virtual .build-deps gcc zlib-dev libc-dev bsd-compat-headers py-setuptools bash
 
-COPY ./package.json /home/
+RUN mkdir -p /app/
 
-COPY . /home/
+WORKDIR /app/
 
-WORKDIR /home/
+COPY ./package.json /app/
+
+COPY . /app/
 
 RUN yarn install
+
+CMD [ "npx", "nodemon", "index.js" ]
