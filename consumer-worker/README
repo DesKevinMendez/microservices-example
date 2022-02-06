@@ -1,6 +1,7 @@
 ## Important
 
-If for some reason the buils for node-kafka say "not found" or something like that; run:
+If for some reason the buils for node-kafka say 
+"Cannot find package 'node-rdkafka' imported from /app/index.js" or something like that; run:
 
 ```
 $ docker-compose run --rm consumer bash
