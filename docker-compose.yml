@@ -7,28 +7,27 @@ networks:
 
 services:
   zookeeper:
-    image: 'bitnami/zookeeper'
-    container_name: 'keeper'
+    image: wurstmeister/zookeeper
+    container_name: 'wurstmeister_zookeeper'
     ports:
-      - '2181:2181'
-    environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
+    - 2181:2181
     networks:
       - microservice-net
   kafka:
-    image: 'bitnami/kafka'
-    container_name: 'kafka'
-    ports:
-      - '9093:9093'
+    image: wurstmeister/kafka
+    container_name: 'wurstmeister_kafka'
+    env_file:
+      - .env
     environment:
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
-      - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
-      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
-      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
+      KAFKA_ADVERTISED_HOST_NAME: "kafka"
+      KAFKA_ADVERTISED_PORT: "9092"
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+    ports:
+      - 9092:9092
     depends_on:
       - zookeeper
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - microservice-net
 
@@ -69,19 +68,22 @@ services:
     ports:
       - "5001:5000"
     depends_on:
+      - kafka
+      - zookeeper
       - db
     networks:
       - microservice-net
- 
+
   consumer:
     container_name: 'consumer'
     build:
       context: ${PWD}/consumer-worker
-    # command : npx nodemon index.js
+    depends_on:
+      - kafka
+      - zookeeper
+      - db
     volumes:
       - ${PWD}/consumer-worker:/app/
     networks:
       - microservice-net
-    # ports:
-    #   - "5001:5000"
 
