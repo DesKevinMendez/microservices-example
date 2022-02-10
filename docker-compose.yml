@@ -7,27 +7,27 @@ networks:
 
 services:
   zookeeper:
-    image: zookeeper
-    container_name: 'keeper'
+    image: wurstmeister/zookeeper
+    container_name: 'wurstmeister_zookeeper'
     ports:
-      - '2181:2181'
-    environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
+    - 2181:2181
     networks:
       - microservice-net
   kafka:
-    image: 'bitnami/kafka'
-    container_name: 'kafka'
-    ports:
-      - '9092:9092'
+    image: wurstmeister/kafka
+    container_name: 'wurstmeister_kafka'
+    env_file:
+      - .env
     environment:
-      - KAFKA_BROKER_ID=1
-      - KAFKA_LISTENERS=PLAINTEXT://:9092
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      - ALLOW_PLAINTEXT_LISTENER=yes
+      KAFKA_ADVERTISED_HOST_NAME: "kafka"
+      KAFKA_ADVERTISED_PORT: "9092"
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+    ports:
+      - 9092:9092
     depends_on:
       - zookeeper
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - microservice-net
 
@@ -44,6 +44,9 @@ services:
       - "${POSTGRES_PORT}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - microservice-net
+
   web:
     container_name: 'python-web'
     build:
@@ -64,4 +67,23 @@ services:
       - ${PWD}/producer-python:/home/
     ports:
       - "5001:5000"
+    depends_on:
+      - kafka
+      - zookeeper
+      - db
+    networks:
+      - microservice-net
+
+  consumer:
+    container_name: 'consumer'
+    build:
+      context: ${PWD}/consumer-worker
+    depends_on:
+      - kafka
+      - zookeeper
+      - db
+    volumes:
+      - ${PWD}/consumer-worker:/app/
+    networks:
+      - microservice-net
 

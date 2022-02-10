@@ -10,7 +10,7 @@ load_dotenv()
 app = Flask(__name__)
 
 TOPIC_NAME = "test"
-KAFKA_SERVER = "localhost:9092"
+KAFKA_SERVER = "kafka:9092"
 
 producer = KafkaProducer(
     bootstrap_servers = KAFKA_SERVER,

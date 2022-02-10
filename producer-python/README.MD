@@ -49,6 +49,9 @@ docker-compose exec db psql -U postgres
 Running migrations
 ```
 docker-compose exec web flask db init
+docker-compose exec web flask db stamp head
+docker-compose exec web flask db migrate
+docker-compose exec web flask db upgrade
 ```
 
 
