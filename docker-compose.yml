@@ -7,7 +7,7 @@ networks:
 
 services:
   zookeeper:
-    image: zookeeper
+    image: 'bitnami/zookeeper'
     container_name: 'keeper'
     ports:
       - '2181:2181'
@@ -19,13 +19,14 @@ services:
     image: 'bitnami/kafka'
     container_name: 'kafka'
     ports:
-      - '9092:9092'
+      - '9093:9093'
     environment:
-      - KAFKA_BROKER_ID=1
-      - KAFKA_LISTENERS=PLAINTEXT://:9092
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
     depends_on:
       - zookeeper
     networks:
@@ -44,6 +45,9 @@ services:
       - "${POSTGRES_PORT}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - microservice-net
+
   web:
     container_name: 'python-web'
     build:
@@ -64,11 +68,16 @@ services:
       - ${PWD}/producer-python:/home/
     ports:
       - "5001:5000"
+    depends_on:
+      - db
+    networks:
+      - microservice-net
+ 
   consumer:
     container_name: 'consumer'
     build:
       context: ${PWD}/consumer-worker
-    # command: npx nodemon index.js
+    # command : npx nodemon index.js
     volumes:
       - ${PWD}/consumer-worker:/app/
     networks:
