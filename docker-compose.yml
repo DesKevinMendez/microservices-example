@@ -86,4 +86,18 @@ services:
       - ${PWD}/consumer-worker:/app/
     networks:
       - microservice-net
+  fastify_producer:
+    container_name: 'fastify_producer'
+    build:
+      context: ${PWD}/producer-api
+    depends_on:
+      - kafka
+      - zookeeper
+    ports:
+      - "3006:3000"
+    command: npx nodemon index.js
+    volumes:
+      - ${PWD}/producer-api:/home/
+    networks:
+      - microservice-net
 
