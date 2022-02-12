@@ -1,9 +1,8 @@
 import Kafka from 'node-rdkafka';
-import objectToJson from '../../utils/objectBuffer.js';
 
 const stream = Kafka.Producer.createWriteStream(
   {
-    'metadata.broker.list': 'localhost:9092'
+    'metadata.broker.list': 'kafka:9092'
   },
   {},
   {

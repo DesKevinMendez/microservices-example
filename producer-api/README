@@ -1,0 +1,13 @@
+## Important
+
+If for some reason the buils for node-kafka say 
+"Cannot find package 'node-rdkafka' imported from {path}" or something like that; run:
+
+```
+$ docker-compose run --rm fastify_producer bash
+$ yarn
+```
+or 
+```
+$ docker-compose run --rm fastify_producer yarn
+```
